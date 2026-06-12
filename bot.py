@@ -1,4 +1,5 @@
 import random
+import re
 
 responses = {
     "how are you": "I am fine!",
@@ -24,7 +25,6 @@ fallback = [
 while True:
 
     user = input("You: ").lower().strip()
-    print(user)
 
     if user == "hello" or user == "hii" or user == "hyy":
         print("Bot: Hello, Buddy! I'm here for you.")
@@ -51,24 +51,23 @@ while True:
         print("Bot: Anytime! Buddy 😊")
 
     elif any(op in user for op in "+-*/()"):
-        try:
-            result = eval(user)
-            print("Bot:", result)
-        except:
-            print("Bot: Invalid mathematical expression.")
+        match = re.search(r'[\d+\-*/(). ]+', user)
 
-    elif user.startswith("calculate "):
-        try:
-            expression = user.replace("calculate ", "")
-            print("Bot:", eval(expression))
-        except:
-            print("Bot: I couldn't solve that.")   
-    
+        if match:
+            expression = match.group().strip()
+
+            try:
+                print("Bot:", eval(expression))
+                
+            except:
+                print("Bot: Invalid mathematical expression.") 
+        
     elif user in responses:
         print("Bot:", responses[user])
 
     elif user == "exit":
         print("Bot: Goodbye!")
-    
+        break
+        
     else:
         print("Bot:", random.choice(fallback))
